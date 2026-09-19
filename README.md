@@ -17,20 +17,27 @@
 
 ## Estrutura do Projeto
 ```text
-├─ dados/
-│  ├─ banco/
-│  │  ├─ banco.db
-│  │  └─ schema.sql
-│  ├─ solicitacoes/
-│  │  └─ solicitacoes.json
-│  ├─ banco.py
-│  └─ README.md
-├─ ga/
-├─ gn/
-├─ time_de_cadastro/
-│  ├─ aprovacao_e_integracao_com_banco.py
-│  ├─ devolucao_e_documentacao.py
-│  └─ visualizar_solicitacao.py
+├─ app/
+│  ├─ dados/
+│  │  ├─ banco/
+│  │  │  ├─ banco.db
+│  │  │  └─ schema.sql
+│  │  ├─ solicitacoes/
+│  │  │  └─ solicitacoes.json
+│  │  ├─ banco.py
+│  ├─ ga/
+│  ├─ gn/
+│  │  ├─ consultar_solicitacao.py
+│  │  ├─ criar_solicitacao.py
+│  │  ├─ editar_solicitacao.py
+│  ├─ time_de_cadastro/
+│  │  ├─ aprovacao_e_integracao_com_banco.py
+│  │  ├─ devolucao_e_documentacao.py
+│  │  └─ visualizar_solicitacao.py
+│  ├─ __main__.py
+│  └─ main.py
+├─ logs/
+│  └─ app.log
 ├─ .env
 ├─ .env.example
 ├─ .gitignore
