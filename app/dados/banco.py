@@ -2,20 +2,27 @@ import os
 import sqlite3
 from dotenv import load_dotenv
 from random import randint
+import logging
 
 load_dotenv()
 
 CAMINHO_BANCO_DB = os.getenv('CAMINHO_BANCO_DB')
 CAMINHO_SCHEMA_SQL = os.getenv('CAMINHO_SCHEMA_SQL')
 
+logger = logging.getLogger(__name__)
+
 class Banco:
     @staticmethod
     def obter_conexao():
-        conexao = sqlite3.connect(CAMINHO_BANCO_DB)
-        conexao.row_factory = sqlite3.Row
-        cursor = conexao.cursor()
-        print('Conexão obtida com sucesso!')
-        return (conexao, cursor)
+        try:
+            conexao = sqlite3.connect(CAMINHO_BANCO_DB)
+            conexao.row_factory = sqlite3.Row
+            cursor = conexao.cursor()
+            logger.info('Conexão com o banco de dados obtida com sucesso')
+            return (conexao, cursor)
+        except Exception as erro:
+            logger.error(f'Ocorreu um erro ao obter a conexão com o banco de dados: {erro}', exc_info=True)
+            raise
 
     @classmethod
     def criar_banco(cls):
@@ -26,7 +33,7 @@ class Banco:
         cursor.executescript(schema_sql)
         conexao.commit()
         conexao.close()
-        print('Banco criado com sucesso!')
+        logger.info('Banco de dados criado com sucesso')
 
     @classmethod
     def adicionar_cadastros_teste(cls):
