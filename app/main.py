@@ -5,6 +5,7 @@ logger = logging.getLogger(__name__)
 from app.dados import banco
 from app.dados.solicitacoes import solicitacoes
 from app.gn import consultar_solicitacao, criar_solicitacao, editar_solicitacao
+from app.time_de_cadastro import devolucao_e_documentacao, visualizar_solicitacao
 
 banco_obj = banco.Banco()
 conexao, cursor = banco_obj.obter_conexao()
@@ -283,7 +284,7 @@ def cad_analisar_solicitacao(acesso, id):
         if opcao == 4:
             return
         
-        lista_de_solicitacoes = solicitacoes.abrir_solicitacoes()
+        lista_de_solicitacoes = visualizar_solicitacao.carregar_solicitacoes()
         solicitacao = None
 
         for solicitacao_ in lista_de_solicitacoes:
@@ -303,6 +304,12 @@ def cad_analisar_solicitacao(acesso, id):
 
         match opcao:
             case 1:
+                motivo = input('Texto de efetivação: ')
+                
+                if not motivo:
+                    print('Escreva o texto de efetivação')
+                    return
+                
                 solicitacao['status'] = 'ATUALIZADO'
                 solicitacao['historico'].append({
                     'acao': 'Efetivado',
@@ -310,6 +317,7 @@ def cad_analisar_solicitacao(acesso, id):
                     'status': 'ATUALIZADO'
                 })
                 solicitacoes.salvar_solicitacao(lista_de_solicitacoes)
+                devolucao_e_documentacao.registrar_documento(numero_solicitacao=id, documento=motivo)
                 print('Atualização efetivada com sucesso')
             case 2:
                 solicitacao['status'] = 'RECUSADO'
@@ -322,7 +330,12 @@ def cad_analisar_solicitacao(acesso, id):
                 print('Solicitação recusada com sucesso')
             case 3:
                 ga_gn = input('Enviar para (GA/gn): ').strip().upper()
-                
+                motivo = input('Motivo da devolução: ')
+
+                if not motivo:
+                    print('Escreva a justificativa para devolução')
+                    return
+
                 match ga_gn:
                     case 'GN':
                         solicitacao['status'] = 'AJUSTE_GN'
@@ -332,6 +345,7 @@ def cad_analisar_solicitacao(acesso, id):
                             'status': 'AJUSTE_GN'
                         })
                         solicitacoes.salvar_solicitacao(lista_de_solicitacoes)
+                        devolucao_e_documentacao.registrar_documento(numero_solicitacao=id, documento=motivo)
                         print('Solicitação devolvida para ajustes com sucesso')
                     case 'GA':
                         solicitacao['status'] = 'AJUSTE_GA'
@@ -341,6 +355,7 @@ def cad_analisar_solicitacao(acesso, id):
                             'status': 'AJUSTE_GA'
                         })
                         solicitacoes.salvar_solicitacao(lista_de_solicitacoes)
+                        devolucao_e_documentacao.registrar_documento(numero_solicitacao=id, documento=motivo)
                         print('Solicitação devolvida para ajustes com sucesso')
                     case _:
                         print('Valor inválido')
